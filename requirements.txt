@@ -1,0 +1,19 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+python-multipart
+pypdf
+
+langchain
+langchain-community
+langchain-groq
+
+pinecone langchain-pinecone
+langchain-huggingface
+
+sentence-transformers
+huggingface-hub
+
+pydantic
+requests
+tqdm
