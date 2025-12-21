@@ -1,3 +1,6 @@
+import os
+import app_state
+
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
@@ -18,34 +21,44 @@ class Assistant:
         self.last_source = None
 
     # --------------------------------------------------
-    # SAFE, TRIMMED DOCUMENT CONTEXT (RAG)
+    # SAFE DOCUMENT CONTEXT (RAG)
     # --------------------------------------------------
     def _policy_context(self, query: str) -> str:
+        # No document uploaded → general chat
+        if app_state.CURRENT_NAMESPACE is None:
+            self.last_source = None
+            return ""
+
         if self.vector_store is None:
-            self.vector_store = get_vector_store()
+            try:
+                self.vector_store = get_vector_store(
+                    namespace=app_state.CURRENT_NAMESPACE
+                )
+            except Exception:
+                self.last_source = None
+                return ""
 
         try:
             docs = self.vector_store.similarity_search(query, k=3)
-
-# ✅ Capture source file name (first relevant doc)
-            if docs and "source" in docs[0].metadata:
-                import os
-                self.last_source = os.path.basename(docs[0].metadata["source"])
-            else:
-                self.last_source = None
-
         except Exception:
-            return "No relevant document context available."
+            self.last_source = None
+            return ""
 
         if not docs:
-            return "No relevant document context available."
+            self.last_source = None
+            return ""
+
+        # Capture source file
+        if "source" in docs[0].metadata:
+            self.last_source = os.path.basename(docs[0].metadata["source"])
+        else:
+            self.last_source = None
 
         MAX_POLICY_CHARS = 1200
-        text = "\n".join(d.page_content for d in docs)
-        return text[:MAX_POLICY_CHARS]
+        return "\n".join(d.page_content for d in docs)[:MAX_POLICY_CHARS]
 
     # --------------------------------------------------
-    # BUILD UNIFIED CHAIN (TOKEN-SAFE)
+    # BUILD CHAIN
     # --------------------------------------------------
     def build_chain(self):
         prompt = ChatPromptTemplate.from_messages([
@@ -79,7 +92,7 @@ class Assistant:
         return chain
 
     # --------------------------------------------------
-    # MAIN ENTRY POINT (FAIL-SAFE)
+    # MAIN ENTRY
     # --------------------------------------------------
     def get_response(self, user_input: str) -> str:
         try:

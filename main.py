@@ -11,9 +11,15 @@ import shutil
 
 from assistant import Assistant
 from roles import normalize_role
+import uuid
+import app_state
+
+
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
+
 
 app = FastAPI(title="Role-Aware RAG API", version="1.0.0")
 app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
@@ -56,7 +62,11 @@ def upload_document(file: UploadFile = File(...)):
             except PermissionError:
                 print(f"⚠️ Skipping locked file: {file_path}")
 
+        if not file.filename:
+            raise HTTPException(status_code=400, detail="Uploaded file must have a name")
+
         filename = file.filename
+
         if not filename.lower().endswith((".pdf", ".txt", ".docx")):
             raise HTTPException(
                 status_code=400,
@@ -69,9 +79,13 @@ def upload_document(file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
 
         file.file.close()
+        
 
         reset_vector_store()
-        get_vector_store()
+
+        app_state.CURRENT_NAMESPACE = f"doc-{uuid.uuid4()}"
+
+        get_vector_store(namespace=app_state.CURRENT_NAMESPACE)
 
         return {
             "message": "Document uploaded successfully",

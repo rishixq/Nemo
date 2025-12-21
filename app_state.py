@@ -3,7 +3,6 @@ import logging
 from dotenv import load_dotenv
 
 from pinecone import Pinecone
-
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_groq import ChatGroq
@@ -20,6 +19,8 @@ _llm = None
 _embeddings = None
 _vector_store = None
 
+CURRENT_NAMESPACE: str | None = None
+
 # --------------------------------------------------
 # Config
 # --------------------------------------------------
@@ -35,8 +36,10 @@ PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 def get_llm():
     global _llm
     if _llm is None:
-        _llm = ChatGroq(model="llama-3.1-8b-instant")
-        logging.info("✅ Groq LLM initialized")
+        _llm = ChatGroq(
+            model="llama-3.1-8b-instant",
+            stop_sequences=None
+        )
     return _llm
 
 # --------------------------------------------------
@@ -48,22 +51,19 @@ def get_embeddings():
         _embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
-        logging.info("✅ Embeddings initialized")
     return _embeddings
 
 # --------------------------------------------------
-# Vector Store (Pinecone Serverless)
+# Vector Store
 # --------------------------------------------------
-def get_vector_store():
+def get_vector_store(namespace: str):
     global _vector_store
+
+    if namespace is None:
+        raise ValueError("Namespace must be set before creating vector store")
 
     if _vector_store is not None:
         return _vector_store
-
-    if not PINECONE_API_KEY or not PINECONE_INDEX_NAME:
-        raise ValueError("❌ Pinecone API key or index name missing")
-
-    logging.info("🌲 Initializing Pinecone (serverless)")
 
     pc = Pinecone(api_key=PINECONE_API_KEY)
     index = pc.Index(PINECONE_INDEX_NAME)
@@ -72,7 +72,7 @@ def get_vector_store():
     splits = chunk_documents(documents)
 
     if not splits:
-        raise ValueError("❌ No documents to ingest")
+        raise ValueError("No documents to ingest")
 
     embeddings = get_embeddings()
 
@@ -80,21 +80,16 @@ def get_vector_store():
         index=index,
         embedding=embeddings,
         text_key="text",
-        namespace="current"
+        namespace=namespace
     )
 
     _vector_store.add_documents(splits)
-
-    logging.info(f"✅ Ingested {len(splits)} chunks into Pinecone")
     return _vector_store
 
 # --------------------------------------------------
 # Reset
 # --------------------------------------------------
 def reset_vector_store():
-    global _vector_store
+    global _vector_store, CURRENT_NAMESPACE
     _vector_store = None
-    logging.info("♻️ Vector store reset (no Pinecone delete)")
-
-
-
+    

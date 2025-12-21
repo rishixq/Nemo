@@ -12,7 +12,7 @@ function App() {
   const [messages, setMessages] = useState([
     {
       role: "ai",
-      content: "👋 Welcome! Select a role and upload documents to start chatting.",
+      content: "👋 **Welcome. I'm Nemo**, your intelligent, role aware AI assistant—select your role, upload documents, and start chatting to get personalized, context-aware responses, while also asking general questions anytime.",
     },
   ]);
 
