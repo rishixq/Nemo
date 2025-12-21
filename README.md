@@ -11,7 +11,7 @@ Built with **clean architecture**, **deployment-ready practices**, and **real-wo
 ## 🎥 Demo Video
 
 ▶️ **Watch the full working demo:**
-👉 *(Add your YouTube / Drive demo link here)*
+👉 *[(Add your YouTube / Drive demo link here](https://youtu.be/nt1SNgoQHEM))*
 
 ---
 
