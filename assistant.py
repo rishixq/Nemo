@@ -29,22 +29,27 @@ class Assistant:
             self.last_source = None
             return ""
 
-        if self.vector_store is None:
-            try:
-                self.vector_store = get_vector_store(
-                    namespace=app_state.CURRENT_NAMESPACE
-                )
-            except Exception:
-                self.last_source = None
-                return ""
+    # Ensure vector store exists
+        try:
+            if self.vector_store is None:
+            self.vector_store = get_vector_store(
+                namespace=app_state.CURRENT_NAMESPACE
+            )
+        except Exception as e:
+            print("❌ Vector store error:", e)
+            self.last_source = None
+            return ""
 
+    # Similarity search
         try:
             docs = self.vector_store.similarity_search(query, k=3)
-        except Exception:
+        except Exception as e:
+            print("❌ Similarity search error:", e)
             self.last_source = None
             return ""
 
         if not docs:
+            print("⚠️ No docs returned from Pinecone")
             self.last_source = None
             return ""
 
