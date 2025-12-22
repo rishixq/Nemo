@@ -48,6 +48,7 @@ def get_llm():
 def get_embeddings():
     global _embeddings
     if _embeddings is None:
+        logging.info("⚙️ Loading embeddings (lazy)")
         _embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
