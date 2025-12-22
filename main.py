@@ -65,6 +65,9 @@ def upload_document(file: UploadFile = File(...)):
 
         if not file.filename:
             raise HTTPException(status_code=400, detail="Uploaded file must have a name")
+            
+        filename = file.filename
+
 
         if not filename.lower().endswith((".pdf", ".txt", ".docx")):
             raise HTTPException(
