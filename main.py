@@ -60,16 +60,11 @@ def upload_document(file: UploadFile = File(...)):
         # 🔥 remove old documents
         for f in os.listdir(DATA_DIR):
             file_path = os.path.join(DATA_DIR, f)
-            try:
-                if os.path.isfile(file_path) and f != ".gitkeep":
-                    os.remove(file_path)
-            except PermissionError:
-                print(f"⚠️ Skipping locked file: {file_path}")
+            if os.path.isfile(file_path) and f != ".gitkeep":
+                os.remove(file_path)
 
         if not file.filename:
             raise HTTPException(status_code=400, detail="Uploaded file must have a name")
-
-        filename = file.filename
 
         if not filename.lower().endswith((".pdf", ".txt", ".docx")):
             raise HTTPException(
@@ -89,11 +84,10 @@ def upload_document(file: UploadFile = File(...)):
 
         app_state.CURRENT_NAMESPACE = f"doc-{uuid.uuid4()}"
 
-        get_vector_store(namespace=app_state.CURRENT_NAMESPACE)
 
         return {
             "message": "Document uploaded successfully",
-            "filename": filename
+            "filename": file.filename
         }
 
     except Exception as e:
