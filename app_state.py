@@ -93,4 +93,6 @@ def get_vector_store(namespace: str):
 def reset_vector_store():
     global _vector_store, CURRENT_NAMESPACE
     _vector_store = None
-    
+    CURRENT_NAMESPACE = None
+    logging.info("♻️ Vector store + namespace reset")
+
