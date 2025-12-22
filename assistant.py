@@ -28,18 +28,8 @@ class Assistant:
 
     # No document uploaded → general chat
         if app_state.CURRENT_NAMESPACE is None:
-            files = [ 
-                f for f in os.listdir("data")
-                if f not in [".gitkeep"]
-            ]
-            if not files:
-                print("❌ No document on disk")
                 self.last_source = None
                 return ""
-
-    # 🔥 Recover namespace after Render restart
-            app_state.CURRENT_NAMESPACE = "recovered-namespace"
-            print("♻️ Namespace auto-recovered:", app_state.CURRENT_NAMESPACE)
             
             
 
