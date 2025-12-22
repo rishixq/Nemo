@@ -88,6 +88,7 @@ def upload_document(file: UploadFile = File(...)):
         reset_vector_store()
 
         app_state.CURRENT_NAMESPACE = f"doc-{uuid.uuid4()}"
+        get_vector_store(namespace=app_state.CURRENT_NAMESPACE)
 
 
         return {
