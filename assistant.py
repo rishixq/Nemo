@@ -24,7 +24,7 @@ class Assistant:
     # SAFE DOCUMENT CONTEXT (RAG)
     # --------------------------------------------------
     def _policy_context(self, query: str) -> str:
-        # No document uploaded → general chat
+    # No document uploaded → general chat
         if app_state.CURRENT_NAMESPACE is None:
             self.last_source = None
             return ""
@@ -48,7 +48,7 @@ class Assistant:
             self.last_source = None
             return ""
 
-        # Capture source file
+    # Capture source file
         if "source" in docs[0].metadata:
             self.last_source = os.path.basename(docs[0].metadata["source"])
         else:
@@ -56,6 +56,7 @@ class Assistant:
 
         MAX_POLICY_CHARS = 1200
         return "\n".join(d.page_content for d in docs)[:MAX_POLICY_CHARS]
+
 
     # --------------------------------------------------
     # BUILD CHAIN
