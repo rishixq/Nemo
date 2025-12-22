@@ -22,6 +22,10 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 app = FastAPI(title="Role-Aware RAG API", version="1.0.0")
+@app.on_event("startup")
+def startup_event():
+    print("✅ FastAPI started (no models loaded)")
+
 app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
 
 app.add_middleware(
