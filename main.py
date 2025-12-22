@@ -81,6 +81,8 @@ def upload_document(file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
 
         file.file.close()
+        print("📁 Files in data dir:", os.listdir(DATA_DIR))
+
         
 
         reset_vector_store()
