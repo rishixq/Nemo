@@ -24,14 +24,18 @@ class Assistant:
     # SAFE DOCUMENT CONTEXT (RAG)
     # --------------------------------------------------
     def _policy_context(self, query: str) -> str:
+        print("🔍 DEBUG: CURRENT_NAMESPACE =", app_state.CURRENT_NAMESPACE)
+
     # No document uploaded → general chat
         if app_state.CURRENT_NAMESPACE is None:
+            print("❌ No namespace set")
             self.last_source = None
             return ""
 
     # Ensure vector store exists
         try:
             if self.vector_store is None:
+                print("⚙️ DEBUG: creating vector store")
                 self.vector_store = get_vector_store(
                     namespace=app_state.CURRENT_NAMESPACE
                 )
@@ -43,15 +47,18 @@ class Assistant:
     # Similarity search
         try:
             docs = self.vector_store.similarity_search(query, k=3)
+            print("📄 DEBUG: docs returned =", len(docs))
         except Exception as e:
             print("❌ Similarity search error:", e)
             self.last_source = None
             return ""
 
         if not docs:
-            print("⚠️ No docs returned from Pinecone")
+            print("⚠️ DEBUG: No docs found in Pinecone")
             self.last_source = None
             return ""
+
+        print("✅ DEBUG: Document retrieval successful")
 
     # Capture source file
         if "source" in docs[0].metadata:
@@ -59,8 +66,8 @@ class Assistant:
         else:
             self.last_source = None
 
-        MAX_POLICY_CHARS = 1200
-        return "\n".join(d.page_content for d in docs)[:MAX_POLICY_CHARS]
+        return "\n".join(d.page_content for d in docs)[:1200]
+
 
 
     # --------------------------------------------------
