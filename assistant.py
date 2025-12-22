@@ -32,9 +32,9 @@ class Assistant:
     # Ensure vector store exists
         try:
             if self.vector_store is None:
-            self.vector_store = get_vector_store(
-                namespace=app_state.CURRENT_NAMESPACE
-            )
+                self.vector_store = get_vector_store(
+                    namespace=app_state.CURRENT_NAMESPACE
+                )
         except Exception as e:
             print("❌ Vector store error:", e)
             self.last_source = None
