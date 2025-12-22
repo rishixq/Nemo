@@ -13,6 +13,11 @@ Built with **clean architecture**, **deployment-ready practices**, and **real-wo
 ▶️ **Watch the full working demo:**
 👉 *(https://youtu.be/nt1SNgoQHEM)*
 
+## Screenshot
+
+<img width="1902" height="1010" alt="Nemo" src="https://github.com/user-attachments/assets/2c4134a8-fc6b-42a1-9a63-06d14b661f93" />
+
+
 ---
 
 ## ✨ Key Capabilities
