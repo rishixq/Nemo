@@ -8,7 +8,8 @@ langchain
 langchain-community
 langchain-groq
 
-pinecone langchain-pinecone
+pinecone 
+langchain-pinecone
 langchain-huggingface
 
 sentence-transformers
