@@ -69,12 +69,6 @@ def get_vector_store(namespace: str):
     pc = Pinecone(api_key=PINECONE_API_KEY)
     index = pc.Index(PINECONE_INDEX_NAME)
 
-    documents = load_documents_from_path(DOCUMENT_PATH)
-    splits = chunk_documents(documents)
-
-    if not splits:
-        raise ValueError("No documents to ingest")
-
     embeddings = get_embeddings()
 
     _vector_store = PineconeVectorStore(
@@ -83,8 +77,14 @@ def get_vector_store(namespace: str):
         text_key="text",
         namespace=namespace
     )
+    documents = load_documents_from_path(DOCUMENT_PATH)
+    splits = chunk_documents(documents)
+
+    if not splits:
+        raise ValueError("No documents found to ingest")
 
     _vector_store.add_documents(splits)
+    logging.info("📄 Documents ingested into Pinecone")
     return _vector_store
 
 # --------------------------------------------------
