@@ -8,6 +8,10 @@ Built with **clean architecture**, **deployment-ready practices**, and **real-wo
 
 ---
 
+## Deployed Site
+👉 *(https://nemo-red.vercel.app/)*
+
+
 ## 🎥 Demo Video
 
 ▶️ **Watch the full working demo:**
