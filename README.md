@@ -10,6 +10,21 @@ Built with **clean architecture**, **deployment-ready practices**, and **real-wo
 
 ## Deployed Site
 👉 *(https://nemo-red.vercel.app/)*
+## ⏳ Cold Start Notice (Backend Hosting)
+
+The backend is hosted on Render (Free Tier).
+
+To optimize resource usage, Render automatically suspends the backend after a period of inactivity.  
+When the application is accessed after being idle, the backend may take **5 minutes** to start.
+
+🔹 During this time:
+- The frontend may display a loading state
+- Initial API requests may take longer than usual
+
+Once the backend is active, the application functions normally.
+
+> Note: This behavior will not occur on paid hosting plans where the service remains always-on.
+
 
 
 ## 🎥 Demo Video
